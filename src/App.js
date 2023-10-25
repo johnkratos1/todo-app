@@ -20,20 +20,19 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState(taskList);
 
-  const handleFilter = () => {
-    switch (filter) {
-      case "active":
-        return setFilteredTodos(taskList.filter((task) => !task.completed));
-
-      case "completed":
-        return setFilteredTodos(taskList.filter((task) => task.completed));
-
-      default:
-        return setFilteredTodos(taskList);
-    }
-  };
-
   useEffect(() => {
+    const handleFilter = () => {
+      switch (filter) {
+        case "active":
+          return setFilteredTodos(taskList.filter((task) => !task.completed));
+
+        case "completed":
+          return setFilteredTodos(taskList.filter((task) => task.completed));
+
+        default:
+          return setFilteredTodos(taskList);
+      }
+    };
     handleFilter();
   }, [taskList, filter]);
 

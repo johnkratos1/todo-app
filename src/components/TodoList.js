@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 import TodoFilterControl from "./TodoFilterControl";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 const TodoList = ({
   taskList,
   setTaskList,
   filteredTodos,
+  setFilteredTodos,
   filter,
   setFilter,
   isDark,
@@ -24,6 +31,23 @@ const TodoList = ({
     setFilter("all");
   };
 
+  const handleDragEnd = (e) => {
+    const { active, over } = e;
+    if (active.id !== over.id) {
+      setFilteredTodos((items) => {
+        const activeIndex = filteredTodos.indexOf(active.id);
+        const overIndex = filteredTodos.indexOf(over.id);
+
+        console.log("ACTIVE >>>>> " + JSON.stringify(active));
+        console.log("ACTIVE >>>>> " + activeIndex);
+        console.log("OVER >>>>> " + overIndex);
+
+        console.log(arrayMove(items, activeIndex, overIndex));
+        return arrayMove(filteredTodos, activeIndex, overIndex);
+      });
+    }
+  };
+
   return (
     <>
       <section
@@ -39,14 +63,24 @@ const TodoList = ({
               isDark ? "divide-[#393A4B]" : "divide-[#E3E4F1]"
             }`}
           >
-            {filteredTodos.map((todo) => (
-              <TodoItem
-                todo={todo}
-                key={todo.id}
-                setTaskList={setTaskList}
-                taskList={taskList}
-              />
-            ))}
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={filteredTodos}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredTodos.map((todo) => (
+                  <TodoItem
+                    todo={todo}
+                    key={todo.id}
+                    setTaskList={setTaskList}
+                    taskList={taskList}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </ul>
         )}
 

@@ -45,11 +45,11 @@ function App() {
           } bg-no-repeat bg-cover h-[35%]`}
         ></div>
         <div
-          className={`w-full h-[80%] ${
+          className={`w-full h-fit pb-10 ${
             isDark ? "bg-[#171823]" : "bg-white"
-          } relative flex justify-center`}
+          } flex justify-center`}
         >
-          <div className="lg:w-1/3 w-10/12 absolute -top-48">
+          <div className="lg:w-2/4 w-10/12 -mt-52">
             <div className="flex justify-between items-center">
               <h1 className="text-5xl font-semibold tracking-widest text-white">
                 TODO
@@ -80,6 +80,7 @@ function App() {
                 taskList={taskList}
                 setTaskList={setTaskList}
                 filteredTodos={filteredTodos}
+                setFilteredTodos = {setFilteredTodos}
                 filter={filter}
                 setFilter={setFilter}
                 isDark={isDark}

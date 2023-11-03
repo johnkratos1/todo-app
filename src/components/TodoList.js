@@ -26,7 +26,7 @@ const TodoList = ({
     setFilter("all");
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;
@@ -36,8 +36,8 @@ const TodoList = ({
       destination.index === source.index
     )
       return;
-      // let add, active = filteredTodos;
-      // // if(source.droppableId = 'filteredTodos')
+    // let add, active = filteredTodos;
+    // // if(source.droppableId = 'filteredTodos')
   };
 
   return (

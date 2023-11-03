@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { Draggable } from "react-beautiful-dnd";
 
-const TodoItem = ({ todo, taskList, setTaskList }) => {
+const TodoItem = ({ todo, taskList, setTaskList, index }) => {
   const [mutableTodo, setMutableTodo] = useState(todo);
 
   const toggleCompleted = () => {
@@ -27,25 +26,20 @@ const TodoItem = ({ todo, taskList, setTaskList }) => {
     ></span>
   );
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: todo.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
-    <li
-      className="flex items-center gap-x-6 py-5"
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      {checkIcon}
-      <p>{mutableTodo.content}</p>
-    </li>
+    <Draggable key={todo.id} draggableId={todo.id.toString()} index={index}>
+      {(provided) => (
+        <li
+          className="flex items-center gap-x-6 py-5"
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
+          {checkIcon}
+          <p>{mutableTodo.content}</p>
+        </li>
+      )}
+    </Draggable>
   );
 };
 

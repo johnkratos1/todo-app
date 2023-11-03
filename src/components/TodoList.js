@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 import TodoFilterControl from "./TodoFilterControl";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 const TodoList = ({
   taskList,
@@ -31,21 +26,18 @@ const TodoList = ({
     setFilter("all");
   };
 
-  const handleDragEnd = (e) => {
-    const { active, over } = e;
-    if (active.id !== over.id) {
-      setFilteredTodos((items) => {
-        const activeIndex = filteredTodos.indexOf(active.id);
-        const overIndex = filteredTodos.indexOf(over.id);
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
 
-        console.log("ACTIVE >>>>> " + JSON.stringify(active));
-        console.log("ACTIVE >>>>> " + activeIndex);
-        console.log("OVER >>>>> " + overIndex);
+    if (!destination) return;
 
-        console.log(arrayMove(items, activeIndex, overIndex));
-        return arrayMove(filteredTodos, activeIndex, overIndex);
-      });
-    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+      // let add, active = filteredTodos;
+      // // if(source.droppableId = 'filteredTodos')
   };
 
   return (
@@ -58,30 +50,30 @@ const TodoList = ({
         {filteredTodos.length < 1 ? (
           <p className="info-text">There's no {textPlacer} task</p>
         ) : (
-          <ul
-            className={`divide-y ${
-              isDark ? "divide-[#393A4B]" : "divide-[#E3E4F1]"
-            }`}
-          >
-            <DndContext
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={filteredTodos}
-                strategy={verticalListSortingStrategy}
-              >
-                {filteredTodos.map((todo) => (
-                  <TodoItem
-                    todo={todo}
-                    key={todo.id}
-                    setTaskList={setTaskList}
-                    taskList={taskList}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </ul>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="filteredTodos">
+              {(provided) => (
+                <ul
+                  className={`divide-y ${
+                    isDark ? "divide-[#393A4B]" : "divide-[#E3E4F1]"
+                  }`}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {filteredTodos.map((todo, index) => (
+                    <TodoItem
+                      todo={todo}
+                      setTaskList={setTaskList}
+                      taskList={taskList}
+                      index={index}
+                      key={todo.id}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
         )}
 
         <div

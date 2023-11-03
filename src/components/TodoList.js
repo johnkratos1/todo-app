@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 import TodoFilterControl from "./TodoFilterControl";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const TodoList = ({
   taskList,
@@ -26,19 +26,27 @@ const TodoList = ({
     setFilter("all");
   };
 
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+  // const onDragEnd = (result: DropResult) => {
+  //   const { source, destination } = result;
 
-    if (!destination) return;
+  //   if (!destination) return;
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
-      return;
-    // let add, active = filteredTodos;
-    // // if(source.droppableId = 'filteredTodos')
-  };
+  //   if (
+  //     destination.droppableId === source.droppableId &&
+  //     destination.index === source.index
+  //   )
+  //     return;
+  //   // let add, active = filteredTodos;
+  //   // // if(source.droppableId = 'filteredTodos')
+  // };
+
+  const handleEnd = (result) =>{
+      const items = Array.from(filteredTodos);
+      const[reOrderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reOrderedItem)
+
+      setFilteredTodos(items)
+  }
 
   return (
     <>
@@ -50,7 +58,7 @@ const TodoList = ({
         {filteredTodos.length < 1 ? (
           <p className="info-text">There's no {textPlacer} task</p>
         ) : (
-          <DragDropContext onDragEnd={onDragEnd}>
+          <DragDropContext onDragEnd={handleEnd}>
             <Droppable droppableId="filteredTodos">
               {(provided) => (
                 <ul
